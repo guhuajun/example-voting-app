@@ -10,7 +10,7 @@ spec:
         app: db
     spec:
       containers:
-      - image: postgres:9.4
+      - image: 192.168.8.21/guhuajun/postgres:9.4
         name: db
         volumeMounts:
         - mountPath: /var/lib/postgresql/data
@@ -18,6 +18,15 @@ spec:
       volumes:
       - name: db-data
         emptyDir: {} 
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values:
+                      - dce02.localdomain
 ---
 apiVersion: v1
 kind: Service
@@ -43,7 +52,7 @@ spec:
         app: redis
     spec:
       containers:
-      - image: 10.0.0.5/guhuajun/redis:alpine
+      - image: 192.168.8.21/guhuajun/redis:alpine
         name: redis
         volumeMounts:
         - mountPath: /data
@@ -51,6 +60,15 @@ spec:
       volumes:
       - name: redis-data
         emptyDir: {} 
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values:
+                      - dce02.localdomain
 ---
 apiVersion: v1
 kind: Service
@@ -76,8 +94,17 @@ spec:
         app: result
     spec:
       containers:
-      - image: 10.0.0.5/guhuajun/examplevotingapp_result:latest
+      - image: 192.168.8.21/guhuajun/example-voting-app_result:latest
         name: result
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values:
+                      - dce02.localdomain
 ---
 apiVersion: v1
 kind: Service
@@ -105,8 +132,17 @@ spec:
         app: vote
     spec:
       containers:
-      - image: 10.0.0.5/guhuajun/examplevotingapp_vote:latest
+      - image: 192.168.8.21/guhuajun/example-voting-app_vote:latest
         name: vote
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values:
+                      - dce02.localdomain
 ---
 apiVersion: v1
 kind: Service
@@ -134,5 +170,14 @@ spec:
         app: worker
     spec:
       containers:
-      - image: 10.0.0.5/guhuajun/examplevotingapp_worker:latest
+      - image: 192.168.8.21/guhuajun/example-voting-app_worker:latest
         name: worker
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values:
+                      - dce02.localdomain
