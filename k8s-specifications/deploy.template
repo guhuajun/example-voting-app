@@ -7,11 +7,11 @@ spec:
   template:
     metadata:
       labels:
-        app: db
+        app: {{APP_NAME}}-db
     spec:
       containers:
       - image: 192.168.126.253/demo1/postgres:9.4
-        name: db
+        name: {{APP_NAME}}-db
         volumeMounts:
         - mountPath: /var/lib/postgresql/data
           name: db-data
@@ -22,7 +22,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: db
+  name: {{APP_NAME}}-db
 spec:
   type: ClusterIP
   ports:
@@ -34,17 +34,17 @@ spec:
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: redis
+  name: {{APP_NAME}}-redis
 spec:
   replicas: 1
   template:
     metadata:
       labels:
-        app: redis
+        app: {{APP_NAME}}-redis
     spec:
       containers:
       - image: 192.168.126.253/demo1/redis:alpine
-        name: redis
+        name: {{APP_NAME}}-redis
         volumeMounts:
         - mountPath: /data
           name: redis-data
@@ -55,34 +55,34 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: redis
+  name: {{APP_NAME}}-redis
 spec:
   type: ClusterIP
   ports:
   - port: 6379
     targetPort: 6379
   selector:
-    app: redis
+    app: {{APP_NAME}}-redis
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: result
+  name: {{APP_NAME}}-result
 spec:
   replicas: 1
   template:
     metadata:
       labels:
-        app: result
+        app: {{APP_NAME}}-result
     spec:
       containers:
-      - image: 192.168.126.253/demo1/example-voting-app_result:latest
-        name: result
+      - image: 192.168.126.253/demo1/example-voting-app_result:1.0.0
+        name: {{APP_NAME}}-result
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: result
+  name: {{APP_NAME}}-result
 spec:
   type: NodePort
   ports:
@@ -91,7 +91,7 @@ spec:
     targetPort: 80
     nodePort: 31001
   selector:
-    app: result
+    app: {{APP_NAME}}-result
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -102,16 +102,16 @@ spec:
   template:
     metadata:
       labels:
-        app: vote
+        app: {{APP_NAME}}-vote
     spec:
       containers:
-      - image: 192.168.126.253/demo1/example-voting-app_vote:latest
-        name: vote
+      - image: 192.168.126.253/demo1/example-voting-app_vote:1.0.0
+        name: {{APP_NAME}}-vote
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: vote
+  name: {{APP_NAME}}-vote
 spec:
   type: NodePort
   ports:
@@ -120,19 +120,19 @@ spec:
     targetPort: 80
     nodePort: 31000
   selector:
-    app: vote
+    app: {{APP_NAME}}-vote
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: worker
+  name: {{APP_NAME}}-worker
 spec:
   replicas: 1
   template:
     metadata:
       labels:
-        app: worker
+        app: {{APP_NAME}}-worker
     spec:
       containers:
-      - image: 192.168.126.253/demo1/example-voting-app_worker:latest
-        name: worker
+      - image: 192.168.126.253/demo1/example-voting-app_worker:1.0.0
+        name: {{APP_NAME}}-worker
