@@ -11,7 +11,7 @@ spec:
     spec:
       containers:
       - image: 192.168.126.253/demo1/postgres:9.4
-        name: {{APP_NAME}}-db
+        name: db
         volumeMounts:
         - mountPath: /var/lib/postgresql/data
           name: db-data
@@ -22,19 +22,20 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{APP_NAME}}-db
+  name: db
 spec:
   type: ClusterIP
   ports:
-  - port: 5432
+  - name: db
+    port: 5432
     targetPort: 5432
   selector:
-    app: db
+    app: {{APP_NAME}}-db
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: {{APP_NAME}}-redis
+  name: redis
 spec:
   replicas: 1
   template:
@@ -44,7 +45,7 @@ spec:
     spec:
       containers:
       - image: 192.168.126.253/demo1/redis:alpine
-        name: {{APP_NAME}}-redis
+        name: redis
         volumeMounts:
         - mountPath: /data
           name: redis-data
@@ -55,11 +56,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{APP_NAME}}-redis
+  name: redis
 spec:
   type: ClusterIP
   ports:
-  - port: 6379
+  - name: redis
+    port: 6379
     targetPort: 6379
   selector:
     app: {{APP_NAME}}-redis
@@ -67,7 +69,7 @@ spec:
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: {{APP_NAME}}-result
+  name: result
 spec:
   replicas: 1
   template:
@@ -77,12 +79,12 @@ spec:
     spec:
       containers:
       - image: 192.168.126.253/demo1/example-voting-app_result:1.0.0
-        name: {{APP_NAME}}-result
+        name: result
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{APP_NAME}}-result
+  name: result
 spec:
   type: NodePort
   ports:
@@ -106,12 +108,12 @@ spec:
     spec:
       containers:
       - image: 192.168.126.253/demo1/example-voting-app_vote:1.0.0
-        name: {{APP_NAME}}-vote
+        name: vote
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{APP_NAME}}-vote
+  name: vote
 spec:
   type: NodePort
   ports:
@@ -125,7 +127,7 @@ spec:
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: {{APP_NAME}}-worker
+  name: worker
 spec:
   replicas: 1
   template:
@@ -135,4 +137,4 @@ spec:
     spec:
       containers:
       - image: 192.168.126.253/demo1/example-voting-app_worker:1.0.0
-        name: {{APP_NAME}}-worker
+        name: worker
