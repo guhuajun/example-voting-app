@@ -1,0 +1,140 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: db
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{APP_NAME}}-db
+    spec:
+      containers:
+      - image: 10.0.0.5/guhuajun/postgres:9.4
+        name: db
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: db-data
+      volumes:
+      - name: db-data
+        emptyDir: {} 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db
+spec:
+  type: ClusterIP
+  ports:
+  - name: db
+    port: 5432
+    targetPort: 5432
+  selector:
+    app: {{APP_NAME}}-db
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: redis
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{APP_NAME}}-redis
+    spec:
+      containers:
+      - image: 10.0.0.5/guhuajun/redis:alpine
+        name: redis
+        volumeMounts:
+        - mountPath: /data
+          name: redis-data
+      volumes:
+      - name: redis-data
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+spec:
+  type: ClusterIP
+  ports:
+  - name: redis
+    port: 6379
+    targetPort: 6379
+  selector:
+    app: {{APP_NAME}}-redis
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: result
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{APP_NAME}}-result
+    spec:
+      containers:
+      - image: 10.0.0.5/guhuajun/example-voting-app_result:latest
+        name: result
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: result
+spec:
+  type: NodePort
+  ports:
+  - name: "result-service"
+    port: 5001
+    targetPort: 80
+    nodePort: 31001
+  selector:
+    app: {{APP_NAME}}-result
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: vote
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{APP_NAME}}-vote
+    spec:
+      containers:
+      - image: 10.0.0.5/guhuajun/example-voting-app_vote:latest
+        name: vote
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vote
+spec:
+  type: NodePort
+  ports:
+  - name: "vote-service"
+    port: 5000
+    targetPort: 80
+    nodePort: 31000
+  selector:
+    app: {{APP_NAME}}-vote
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: worker
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{APP_NAME}}-worker
+    spec:
+      containers:
+      - image: 10.0.0.5/guhuajun/example-voting-app_worker:latest
+        name: worker
