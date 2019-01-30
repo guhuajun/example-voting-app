@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+# pylint: disable=
+
 from flask import Flask, render_template, request, make_response, g
 from redis import Redis
 import os
@@ -5,18 +8,22 @@ import socket
 import random
 import json
 
-option_a = os.getenv('OPTION_A', "Cats")
-option_b = os.getenv('OPTION_B', "Dogs")
+import urllib2
+
+option_a = os.getenv('OPTION_A', 'Cats')
+option_b = os.getenv('OPTION_B', 'Dogs')
 hostname = socket.gethostname()
 
 app = Flask(__name__)
 
+
 def get_redis():
     if not hasattr(g, 'redis'):
-        g.redis = Redis(host="redis", db=0, socket_timeout=5)
+        g.redis = Redis(host='redis', db=0, socket_timeout=5)
     return g.redis
 
-@app.route("/", methods=['POST','GET'])
+
+@app.route('/', methods=['POST', 'GET'])
 def hello():
     voter_id = request.cookies.get('voter_id')
     if not voter_id:
@@ -45,5 +52,26 @@ def hello():
     return resp
 
 
-if __name__ == "__main__":
+@app.route('/secdemo', methods=['GET'])
+def secdemo():
+    msg = u'访问未经许可的外部站点，并发送数据'
+    resp = make_response(render_template(
+        'secdemo.html',
+        msg=msg,
+    ))
+
+    try:
+        for x in range(5):
+            response = urllib2.urlopen('http://www.baidu.com')
+    except:
+        msg = u'访问未经许可的外部站点，但已被NeuVector拦截'
+        resp = make_response(render_template(
+            'secdemo.html',
+            msg=msg,
+        ))
+
+    return resp
+
+
+if __name__ == '__main__':
     app.run(host='0.0.0.0', port=80, debug=True, threaded=True)

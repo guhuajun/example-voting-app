@@ -7,24 +7,24 @@ spec:
   template:
     metadata:
       labels:
-        app: db
+        app: {{APP_NAME}}-db
     spec:
       containers:
-      - image: 10.0.0.5/guhuajun/postgres:9.4
+      - image: 192.168.0.35/demo/postgres:9.4
         name: db
         volumeMounts:
         - mountPath: /var/lib/postgresql/data
           name: db-data
+        resources:
+          limits:
+            cpu: 100m
+            memory: "200Mi"
+          requests:
+            cpu: 100m
+            memory: "200Mi"
       volumes:
       - name: db-data
         emptyDir: {} 
-      resources:
-        limits:
-          cpu: 100m
-          memory: "200MiB"
-        requests:
-          cpu: 100m
-          memory: "200MiB"
 ---
 apiVersion: v1
 kind: Service
@@ -33,10 +33,11 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-  - port: 5432
+  - name: db
+    port: 5432
     targetPort: 5432
   selector:
-    app: db
+    app: {{APP_NAME}}-db
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -47,24 +48,24 @@ spec:
   template:
     metadata:
       labels:
-        app: redis
+        app: {{APP_NAME}}-redis
     spec:
       containers:
-      - image: 10.0.0.5/guhuajun/redis:alpine
+      - image: 192.168.0.35/demo/redis:alpine
         name: redis
         volumeMounts:
         - mountPath: /data
           name: redis-data
+        resources:
+          limits:
+            cpu: 100m
+            memory: "200Mi"
+          requests:
+            cpu: 100m
+            memory: "200Mi"
       volumes:
       - name: redis-data
         emptyDir: {}
-      resources:
-        limits:
-          cpu: 100m
-          memory: "200MiB"
-        requests:
-          cpu: 100m
-          memory: "200MiB"
 ---
 apiVersion: v1
 kind: Service
@@ -73,10 +74,11 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-  - port: 6379
+  - name: redis
+    port: 6379
     targetPort: 6379
   selector:
-    app: redis
+    app: {{APP_NAME}}-redis
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -87,18 +89,18 @@ spec:
   template:
     metadata:
       labels:
-        app: result
+        app: {{APP_NAME}}-result
     spec:
       containers:
-      - image: 10.0.0.5/guhuajun/example-voting-app_result:latest
+      - image: 192.168.0.35/demo/result:0.1
         name: result
-      resources:
-        limits:
-          cpu: 100m
-          memory: "200MiB"
-        requests:
-          cpu: 100m
-          memory: "200MiB"
+        resources:
+          limits:
+            cpu: 100m
+            memory: "200Mi"
+          requests:
+            cpu: 100m
+            memory: "200Mi"
 ---
 apiVersion: v1
 kind: Service
@@ -112,7 +114,7 @@ spec:
     targetPort: 80
     nodePort: 31001
   selector:
-    app: result
+    app: {{APP_NAME}}-result
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -123,18 +125,18 @@ spec:
   template:
     metadata:
       labels:
-        app: vote
+        app: {{APP_NAME}}-vote
     spec:
       containers:
-      - image: 10.0.0.5/guhuajun/example-voting-app_vote:latest
+      - image: 192.168.0.35/demo/vote:0.1
         name: vote
-      resources:
-        limits:
-          cpu: 100m
-          memory: "200MiB"
-        requests:
-          cpu: 100m
-          memory: "200MiB"
+        resources:
+          limits:
+            cpu: 100m
+            memory: "200Mi"
+          requests:
+            cpu: 100m
+            memory: "200Mi"
 ---
 apiVersion: v1
 kind: Service
@@ -148,7 +150,7 @@ spec:
     targetPort: 80
     nodePort: 31000
   selector:
-    app: vote
+    app: {{APP_NAME}}-vote
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -159,15 +161,15 @@ spec:
   template:
     metadata:
       labels:
-        app: worker
+        app: {{APP_NAME}}-worker
     spec:
       containers:
-      - image: 10.0.0.5/guhuajun/example-voting-app_worker:latest
+      - image: 192.168.0.35/demo/worker:0.1
         name: worker
-      resources:
-        limits:
-          cpu: 100m
-          memory: "200MiB"
-        requests:
-          cpu: 100m
-          memory: "200MiB"
+        resources:
+          limits:
+            cpu: 100m
+            memory: "200Mi"
+          requests:
+            cpu: 100m
+            memory: "200Mi"
