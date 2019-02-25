@@ -82,17 +82,4 @@
     </plugins>
   </build>
 
-  <distributionManagement>
-      <repository>
-          <!-- 注意此处需要和settings.xml中配置的id保持一致 -->
-          <id>nexus-releases</id>
-          <url>http://10.0.0.13:8085/repository/nexus-releases/</url>
-      </repository>
-      
-      <snapshotRepository>
-          <id>nexus-snapshots</id>
-          <url>http://10.0.0.13:8085/repository/nexus-snapshots/</url>
-      </snapshotRepository>
-  </distributionManagement>
-
 </project>
