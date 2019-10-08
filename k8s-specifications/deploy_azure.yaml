@@ -12,19 +12,19 @@ spec:
       containers:
       - image: 10.0.0.5/guhuajun/postgres:9.4
         name: db
+        resources:
+          limits:
+            cpu: 100m
+            memory: "200MiB"
+          requests:
+            cpu: 100m
+            memory: "200MiB"
         volumeMounts:
         - mountPath: /var/lib/postgresql/data
           name: db-data
       volumes:
       - name: db-data
         emptyDir: {} 
-      resources:
-        limits:
-          cpu: 100m
-          memory: "200MiB"
-        requests:
-          cpu: 100m
-          memory: "200MiB"
 ---
 apiVersion: v1
 kind: Service
@@ -52,6 +52,13 @@ spec:
       containers:
       - image: 10.0.0.5/guhuajun/redis:alpine
         name: redis
+        resources:
+          limits:
+            cpu: 100m
+            memory: "200MiB"
+          requests:
+            cpu: 100m
+            memory: "200MiB"
         volumeMounts:
         - mountPath: /data
           name: redis-data
@@ -92,13 +99,13 @@ spec:
       containers:
       - image: 10.0.0.5/guhuajun/example-voting-app_result:latest
         name: result
-      resources:
-        limits:
-          cpu: 100m
-          memory: "200MiB"
-        requests:
-          cpu: 100m
-          memory: "200MiB"
+        resources:
+          limits:
+            cpu: 100m
+            memory: "200MiB"
+          requests:
+            cpu: 100m
+            memory: "200MiB"
 ---
 apiVersion: v1
 kind: Service
@@ -128,13 +135,13 @@ spec:
       containers:
       - image: 10.0.0.5/guhuajun/example-voting-app_vote:latest
         name: vote
-      resources:
-        limits:
-          cpu: 100m
-          memory: "200MiB"
-        requests:
-          cpu: 100m
-          memory: "200MiB"
+        resources:
+          limits:
+            cpu: 100m
+            memory: "200MiB"
+          requests:
+            cpu: 100m
+            memory: "200MiB"
 ---
 apiVersion: v1
 kind: Service
@@ -164,10 +171,10 @@ spec:
       containers:
       - image: 10.0.0.5/guhuajun/example-voting-app_worker:latest
         name: worker
-      resources:
-        limits:
-          cpu: 100m
-          memory: "200MiB"
-        requests:
-          cpu: 100m
-          memory: "200MiB"
+        resources:
+          limits:
+            cpu: 100m
+            memory: "200MiB"
+          requests:
+            cpu: 100m
+            memory: "200MiB"

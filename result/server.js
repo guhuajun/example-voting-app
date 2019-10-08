@@ -7,7 +7,7 @@ var express = require('express'),
     methodOverride = require('method-override'),
     app = express(),
     server = require('http').Server(app),
-    io = require('socket.io')(server);
+    io = require('socket.io')(server, {path: '/result/socket.io'});
 
 io.set('transports', ['polling']);
 
@@ -74,9 +74,9 @@ app.use(function(req, res, next) {
   next();
 });
 
-app.use(express.static(__dirname + '/views'));
+app.use('/result', express.static(__dirname + '/views'));
 
-app.get('/', function (req, res) {
+app.get('/result', function (req, res) {
   res.sendFile(path.resolve(__dirname + '/views/index.html'));
 });
 

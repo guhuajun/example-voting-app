@@ -1,23 +1,35 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: db
+  labels:
+    app: {{APP_NAME}}-db
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: {{APP_NAME}}-db
   template:
     metadata:
       labels:
         app: {{APP_NAME}}-db
     spec:
       containers:
-      - image: 10.0.0.5/guhuajun/postgres:9.4
+      - image: 10.0.0.11/demo/postgres:9.4
         name: db
         volumeMounts:
         - mountPath: /var/lib/postgresql/data
           name: db-data
+        resources:
+          limits:
+            cpu: 200m
+            memory: "200Mi"
+          requests:
+            cpu: 200m
+            memory: "200Mi"
       volumes:
       - name: db-data
-        emptyDir: {} 
+        emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
@@ -44,11 +56,18 @@ spec:
         app: {{APP_NAME}}-redis
     spec:
       containers:
-      - image: 10.0.0.5/guhuajun/redis:alpine
+      - image: 10.0.0.11/demo/redis:alpine
         name: redis
         volumeMounts:
         - mountPath: /data
           name: redis-data
+        resources:
+          limits:
+            cpu: 200m
+            memory: "200Mi"
+          requests:
+            cpu: 200m
+            memory: "200Mi"
       volumes:
       - name: redis-data
         emptyDir: {}
@@ -78,8 +97,15 @@ spec:
         app: {{APP_NAME}}-result
     spec:
       containers:
-      - image: 10.0.0.5/guhuajun/example-voting-app_result:latest
+      - image: 10.0.0.11/demo/example-voting-app_result:latest
         name: result
+        resources:
+          requests:
+            cpu: "200m"
+            memory: "200Mi"
+          limits:
+            cpu: "200m"
+            memory: "200Mi"
 ---
 apiVersion: v1
 kind: Service
@@ -107,8 +133,15 @@ spec:
         app: {{APP_NAME}}-vote
     spec:
       containers:
-      - image: 10.0.0.5/guhuajun/example-voting-app_vote:latest
+      - image: 10.0.0.11/demo/example-voting-app_vote:latest
         name: vote
+        resources:
+          requests:
+            cpu: "200m"
+            memory: "200Mi"
+          limits:
+            cpu: "200m"
+            memory: "200Mi"
 ---
 apiVersion: v1
 kind: Service
@@ -136,5 +169,12 @@ spec:
         app: {{APP_NAME}}-worker
     spec:
       containers:
-      - image: 10.0.0.5/guhuajun/example-voting-app_worker:latest
+      - image: 10.0.0.11/demo/example-voting-app_worker:latest
         name: worker
+        resources:
+          requests:
+            cpu: "200m"
+            memory: "200Mi"
+          limits:
+            cpu: "200m"
+            memory: "200Mi"

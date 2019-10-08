@@ -15,7 +15,7 @@ services:
 
   result:
     build: ./result
-    image: secdemo/result:0.1
+    image: secdemo/result:0.0.1
     command: nodemon server.js
     volumes:
       - ./result:/app
